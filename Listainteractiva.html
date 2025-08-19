@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Tareas Interactiva</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+    #app {
+      background: #fff;
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input[type="text"] {
+      width: 70%;
+      padding: 10px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      padding: 10px;
+      margin: 10px 0;
+      background: #e0e0e0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 5px;
+    }
+    .completed {
+      text-decoration: line-through;
+      color: gray;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h2>📋 Mi Lista de Tareas</h2>
+    <input type="text" id="seachInput" placeholder="Buscar tarea...">
+
+    <div class="actions">
+    <input type="text" id="taskInput" placeholder="Escribe una tarea...">
+    <button onclick="addTask()">Agregar</button>
+    </div>
+
+    <ul id="taskList"></ul>
+    
+  </div>
+  
+
+<script>
+  // Cargar tareas al iniciar
+  document.addEventListener("DOMContenLoader", loadTasks);
+
+  function loadTasks() {
+    const task = JSON.parse(localStorage.getItem("tasks")) || [];
+    tasks.forEach(task => createTaskElement(task.text, task.completed));
+  }
+
+  function saveTasks() {
+    const tasks = [];
+    document.querySelectorAll("li").forEach(li => {
+      task.push({
+        text: li.querySelector("span").textContent,
+        completed: li.querySelector("span").classList.contains("completed")
+      });
+    });
+    localStorage.setItem("task", JSON.stringify(tasks));
+  }
+
+  function addTask() {
+    const input = document.getElementById("taskInput");
+    const text = input.value.trim();
+    if (text !== "") {
+      createTaskElement(text);
+      input.value = "";
+      saveTasks();
+    }
+  }
+
+      // Editar tarea al hacer doble clic
+    span.addEventListener("dblclick", () => {
+      const nuevoTexto = prompt("Editar tarea:", span.textContent);
+      if (nuevoTexto && nuevoTexto.trim() !== "") {
+        span.textContent = nuevoTexto.trim();
+        saveTasks();
+      }
+    });
+
+    
+  // Ordenar tareas alfabéticamente
+  function sortTasks() {
+    const list = document.getElementById("taskList");
+    const tasks = Array.from(list.querySelectorAll("li"));
+    tasks.sort((a, b) => 
+      a.querySelector("span").textContent.localeCompare(b.querySelector("span").textContent)
+    );
+    tasks.forEach(task => list.appendChild(task));
+    saveTasks();
+  }
+
+  
+  // Buscar tareas
+  document.getElementById("searchInput").addEventListener("input", (e) => {
+    const filter = e.target.value.toLowerCase();
+    document.querySelectorAll("#taskList li").forEach(li => {
+      const text = li.querySelector("span").textContent.toLowerCase();
+      li.style.display = text.includes(filter) ? "flex" : "none";
+    });
+  });
+
+  function createTaskElement(text, completed = false) {
+    const li = document.createElement("li");
+    const span = document.createElement("span");
+    span.textContent = text;
+    if (completed) span.classList.add("completed");
+
+    span.addEventListener("click", () => {
+      span.classList.toggle("completed");
+      saveTasks();
+    });
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "Borrar";
+    deleteBtn.addEventListener("click", () => {
+      li.remove();
+      saveTasks();
+    });
+
+    li.appendChild(span);
+    li.appendChild(deleteBtn);
+    document.getElementById("taskList").appendChild(li);
+  }
+</script>
+</body>
+</html>

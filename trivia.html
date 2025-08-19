@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trivia de JavaScript</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    #quiz-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2, p {
+      text-align: center;
+    }
+    .question {
+      font-weight: bold;
+    }
+    .answers button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #e0e0e0;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .answers button:hover {
+      background-color: #ccc;
+    }
+    .result {
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="quiz-container">
+    <h2>🧠 Trivia de JavaScript</h2>
+    <div id="question-container">
+      <p class="question" id="question"></p>
+      <div class="answers" id="answers"></div>
+    </div>
+    <p class="result" id="result"></p>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "¿Qué método convierte JSON a objeto?",
+        answers: ["stringify()", "parse()", "toObject()", "JSON.stringify"],
+        correct: 1
+      },
+      {
+        question: "¿Cuál es el símbolo del operador de igualdad estricta?",
+        answers: ["==", "=", "===", "!=="],
+        correct: 2
+      },
+      {
+        question: "¿Qué tipo de variable permite reasignación con let?",
+        answers: ["const", "var", "let", "int"],
+        correct: 2
+      }, 
+       { question: "¿Qué devuelve typeof null?", 
+       answers: ["null", "undefined", "object", "string"], 
+       correct: 2 
+      },
+
+      { question: "¿Cuál de estos NO es un tipo primitivo en JavaScript?", 
+      answers: ["string", "boolean", "object", "function"], 
+      correct: 3 
+    },
+      { question: "¿Qué palabra clave se usa para declarar una constante?", 
+      answers: ["let", "const", "var", "static"], 
+      correct: 1 
+    }
+
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById("question");
+    const answersEl = document.getElementById("answers");
+    const resultEl = document.getElementById("result");
+    const restartBtn = document.getElementById("restart");
+    const timerEl = document.getElementById("timer");
+    const historyList = document.getElementById("historyList");
+    
+
+
+    function loadQuestion() {
+      const q = questions[currentQuestion];
+      questionEl.textContent = q.question;
+      answersEl.innerHTML = "";
+      q.answers.forEach((answer, index) => {
+        const btn = document.createElement("button");
+        btn.textContent = answer;
+        btn.onclick = () => selectAnswer(index);
+        answersEl.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(index) {
+      if (index === questions[currentQuestion].correct) {
+        score++;
+      }
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        loadQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      questionEl.textContent = "Trivia Finalizada";
+      answersEl.innerHTML = "";
+      resultEl.textContent = `Puntaje final: ${score} de ${questions.length}`;
+    }
+    
+    // guardar en localStorage
+    function saveScore(score) {
+      let history = JSON.parse(localStorage.getItem("quizHistory")) || [];
+      history.push({ date: new Date().toLocaleString(), score: score });
+      localStorage.setItem("quizHistory", JSON.stringify(history));
+    }
+
+      // historial
+    function showHistory() {
+      historyList.innerHTML = "";
+      let history = JSON.parse(localStorage.getItem("quizHistory")) || [];
+      history.forEach(h => {
+        let li = document.createElement("li");
+        li.textContent = `${h.date} → Puntaje: ${h.score}`;
+        historyList.appendChild(li);
+      });
+    }
+
+
+
+    // Iniciar la trivia
+    loadQuestion();
+  </script>
+</body>
+</html>
